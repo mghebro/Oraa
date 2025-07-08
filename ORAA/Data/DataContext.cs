@@ -39,6 +39,47 @@ namespace ORAA.Data
         public DbSet<Material> Materials { get; set; }
         public DbSet<User> Users { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Jewelery>()
+                .HasOne(j => j.HandCraftMan)
+                .WithMany() // Or WithMany(h => h.Jewelries) if defined
+                .HasForeignKey(j => j.HandCraftManId)
+                .OnDelete(DeleteBehavior.Restrict); // 👈 prevent cascade here
+
+            modelBuilder.Entity<Jewelery>()
+                .HasOne(j => j.Material)
+                .WithMany() // Or WithMany(m => m.Jewelries)
+                .HasForeignKey(j => j.MaterialId)
+                .OnDelete(DeleteBehavior.Cascade); // 👈 allow cascade on only one, if needed
+
+            modelBuilder.Entity<Jewelery>()
+                .HasOne(j => j.Affirmation)
+                .WithMany()
+                .HasForeignKey("AffirmationId") // if not explicitly declared in Jewelery class
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Jewelery>()
+                .HasOne(j => j.Ritual)
+                .WithMany()
+                .HasForeignKey("RitualId")
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Jewelery>()
+                .HasOne(j => j.Review)
+                .WithMany()
+                .HasForeignKey("ReviewId")
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Jewelery>()
+                .HasOne(j => j.Notification)
+                .WithMany()
+                .HasForeignKey("NotificationId")
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
