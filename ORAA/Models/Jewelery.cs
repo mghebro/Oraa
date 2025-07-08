@@ -28,9 +28,16 @@
         public Material Material { get; set; }
         public int MaterialId { get; set; }
         public  Affirmation Affirmation { get; set; }
+        public int? AffirmationId { get; set; }
         public Ritual Ritual { get; set; }
+        public int? RitualId { get; set; }
+
         public Review Review { get; set; }
+        public int? ReviewId { get; set; }
+
         public Notification Notification { get; set; }
-        
+        public int? NotificationId { get; set; }
+
+
     }
 }
