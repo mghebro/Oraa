@@ -12,8 +12,8 @@ using ORAA.Data;
 namespace ORAA.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250708123055_init243")]
-    partial class init243
+    [Migration("20250708150901_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -467,6 +467,8 @@ namespace ORAA.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CartId");
 
                     b.ToTable("CartItems");
                 });
@@ -1600,6 +1602,17 @@ namespace ORAA.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ORAA.Models.CartItem", b =>
+                {
+                    b.HasOne("ORAA.Models.Cart", "Cart")
+                        .WithMany("CartItems")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+                });
+
             modelBuilder.Entity("ORAA.Models.Chat", b =>
                 {
                     b.HasOne("ORAA.Models.Consultant", null)
@@ -1777,6 +1790,11 @@ namespace ORAA.Migrations
                     b.Navigation("Notification");
 
                     b.Navigation("Purchases");
+                });
+
+            modelBuilder.Entity("ORAA.Models.Cart", b =>
+                {
+                    b.Navigation("CartItems");
                 });
 
             modelBuilder.Entity("ORAA.Models.Consultant", b =>
