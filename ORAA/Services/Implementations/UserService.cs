@@ -15,7 +15,7 @@ namespace ORAA.Services.Implementations
 {
     public class UserService : IUserService
     {
-       
+
         private readonly DataContext _context;
         private readonly IMapper _mapper;
         private readonly IJWTService _jwtService;
@@ -167,6 +167,8 @@ namespace ORAA.Services.Implementations
 
             // Set UserName to Email (required by Identity)
             user.UserName = user.Email;
+            user.CreatedAt = DateTime.UtcNow;
+            user.UpdatedAt = DateTime.UtcNow;
 
             var validator = new UserValidator();
             var result = validator.Validate(user);
@@ -188,8 +190,8 @@ namespace ORAA.Services.Implementations
             user.VerificationCode = randomCode;
 
             // Send verification email
-            //SMTPService smtpService = new SMTPService();
-            //smtpService.SendEmail(user.Email, "Verification", $"<p>{user.VerificationCode}</p>");
+            SMTPService smtpService = new SMTPService();
+            smtpService.SendEmail(user.Email, "Verification", smtpService.GetVerificationEmailHtml(user.VerificationCode));
 
             // Create user using UserManager
             var createResult = await _userManager.CreateAsync(user, request.Password);
@@ -203,6 +205,7 @@ namespace ORAA.Services.Implementations
                     Status = StatusCodes.Status200OK,
                     Message = "User registered successfully. Please check your email for verification code.",
                 };
+                await _context.SaveChangesAsync();
                 return successResponse;
             }
             else
@@ -217,11 +220,12 @@ namespace ORAA.Services.Implementations
                 };
                 return failureResponse;
             }
+
         }
 
         public async Task<ApiResponse<bool>> Verify(string email, string code)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
             if (user == null)
             {
@@ -234,33 +238,32 @@ namespace ORAA.Services.Implementations
 
                 return notfoundRequest;
             }
+
+            if (user.VerificationCode == code)
+            {
+                user.Status = ACCOUNT_STATUS.VERIFIED;
+                user.VerificationCode = null;
+
+                _context.SaveChangesAsync();
+                var SuccesResponse = new ApiResponse<bool>
+                {
+                    Data = true,
+                    Message = "User Verified",
+                    Status = StatusCodes.Status200OK,
+                };
+                return SuccesResponse;
+            }
             else
             {
-                if (user.VerificationCode == code)
+                var BadRequestResponse = new ApiResponse<bool>
                 {
-                    user.Status = ACCOUNT_STATUS.VERIFIED;
-                    user.VerificationCode = null;
-
-                    _context.SaveChanges();
-                    var SuccesResponse = new ApiResponse<bool>
-                    {
-                        Data = true,
-                        Message = "User Verified",
-                        Status = StatusCodes.Status200OK,
-                    };
-                    return SuccesResponse;
-                }
-                else
-                {
-                    var BadRequestResponse = new ApiResponse<bool>
-                    {
-                        Data = false,
-                        Message = "Wrong Verification Code",
-                        Status = StatusCodes.Status400BadRequest,
-                    };
-                    return BadRequestResponse;
-                }
+                    Data = false,
+                    Message = "Wrong Verification Code",
+                    Status = StatusCodes.Status400BadRequest,
+                };
+                return BadRequestResponse;
             }
+
         }
 
         public async Task<ApiResponse<UserDTO>> GetProfile(int id)
@@ -330,9 +333,9 @@ namespace ORAA.Services.Implementations
 
                     user.PasswordResetCode = randomCode;
 
-                  //  SMTPService smtpService = new SMTPService();
+                    SMTPService smtpService = new SMTPService();
 
-                   // smtpService.SendEmail(user.Email, "Reset Code", $"<p>{user.PasswordResetCode}</p>");
+                    smtpService.SendEmail(user.Email, "Reset Code", $"<p>{user.PasswordResetCode}</p>");
 
                     _context.SaveChanges();
 
@@ -477,4 +480,3 @@ namespace ORAA.Services.Implementations
         }
     }
 }
-
