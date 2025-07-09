@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ORAA.Core;
 using ORAA.Models;
 using ORAA.Request;
+using ORAA.DTO;
 using ORAA.Services.Interfaces;
 namespace ORAA.Controllers;
 
@@ -24,11 +25,23 @@ public class CartController : ControllerBase
         return StatusCode(response.Status, response);
     }
 
-    [HttpPost("items/add")]
+    [HttpPost("CartItem/add")]
     public async Task<ActionResult<ApiResponse<CartItem>>> AddCartItem([FromBody] AddCartItem request)
     {
         var response = await _cartService.AddCartItemAsync(request);
         return StatusCode(response.Status, response);
+    }
+    [HttpDelete("api/cart-items/{id}")]
+    public async Task<ActionResult<ApiResponse<string>>> DeleteCartItem(int id)
+    {
+        var result = await _cartService.DeleteCartItemAsync(id);
+        return StatusCode(result.Status, result);
+    }
+    [HttpPut("api/cart-items/{id}/quantity")]
+    public async Task<ActionResult<ApiResponse<CartItem>>> UpdateCartItemQuantity(int id, [FromBody] CartItemDTO request)
+    {
+        var result = await _cartService.UpdateCartItemQuantityAsync(id, request.Quantity);
+        return StatusCode(result.Status, result);
     }
 
 }

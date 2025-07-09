@@ -8,7 +8,7 @@ public class AddCart
     public decimal Total { get; set; }
     public int? DiscountCodeId { get; set; }
     public int? GiftCardId { get; set; }
-    public DateTime ExpiresAt { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    //public DateTime ExpiresAt { get; set; }
+    //public DateTime CreatedAt { get; set; }
+    //public DateTime UpdatedAt { get; set; }
 }

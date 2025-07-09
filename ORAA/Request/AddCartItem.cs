@@ -10,6 +10,4 @@ public class AddCartItem
     public string Engraving { get; set; }
     public string Size { get; set; }
     public string CustomizationNotes { get; set; }
-    public DateTime CreatedAt { get; set; } 
-    public DateTime UpdatedAt { get; set; }
 }
