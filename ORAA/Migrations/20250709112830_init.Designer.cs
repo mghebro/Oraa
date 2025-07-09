@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ORAA.Data;
 
@@ -11,9 +12,11 @@ using ORAA.Data;
 namespace ORAA.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250709112830_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1364,11 +1367,23 @@ namespace ORAA.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ChatsId")
+                    b.Property<string>("Avatar")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ChatsId")
                         .HasColumnType("int");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -1377,7 +1392,7 @@ namespace ORAA.Migrations
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DiscountCodesId")
+                    b.Property<int>("DiscountCodesId")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -1394,10 +1409,14 @@ namespace ORAA.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("GIftCardId")
+                    b.Property<int>("GIftCardId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("GiftId")
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GiftId")
                         .HasColumnType("int");
 
                     b.Property<string>("GoogleId")
@@ -1430,7 +1449,7 @@ namespace ORAA.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<int?>("NotificationId")
+                    b.Property<int>("NotificationId")
                         .HasColumnType("int");
 
                     b.Property<string>("PasswordHash")
@@ -1440,12 +1459,13 @@ namespace ORAA.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("PurchasesId")
+                    b.Property<int>("PurchasesId")
                         .HasColumnType("int");
 
                     b.Property<bool>("PushNotifications")
@@ -1466,8 +1486,16 @@ namespace ORAA.Migrations
                     b.Property<bool>("SmsNotifications")
                         .HasColumnType("bit");
 
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -1480,6 +1508,11 @@ namespace ORAA.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("VerificationCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -1712,27 +1745,39 @@ namespace ORAA.Migrations
                 {
                     b.HasOne("ORAA.Models.Chat", "Chats")
                         .WithMany()
-                        .HasForeignKey("ChatsId");
+                        .HasForeignKey("ChatsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ORAA.Models.DiscountCode", "DiscountCodes")
                         .WithMany()
-                        .HasForeignKey("DiscountCodesId");
+                        .HasForeignKey("DiscountCodesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ORAA.Models.GIftCard", "GIftCard")
                         .WithMany()
-                        .HasForeignKey("GIftCardId");
+                        .HasForeignKey("GIftCardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ORAA.Models.Gift", "Gift")
                         .WithMany()
-                        .HasForeignKey("GiftId");
+                        .HasForeignKey("GiftId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ORAA.Models.Notification", "Notification")
                         .WithMany()
-                        .HasForeignKey("NotificationId");
+                        .HasForeignKey("NotificationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ORAA.Models.Purchase", "Purchases")
                         .WithMany()
-                        .HasForeignKey("PurchasesId");
+                        .HasForeignKey("PurchasesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Chats");
 
@@ -1763,9 +1808,11 @@ namespace ORAA.Migrations
 
             modelBuilder.Entity("ORAA.Models.User", b =>
                 {
-                    b.Navigation("Favorite");
+                    b.Navigation("Favorite")
+                        .IsRequired();
 
-                    b.Navigation("Review");
+                    b.Navigation("Review")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
