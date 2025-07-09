@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ORAA.Migrations
 {
     /// <inheritdoc />
-    public partial class init243 : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -429,16 +429,9 @@ namespace ORAA.Migrations
                     Status = table.Column<int>(type: "int", nullable: false),
                     Role = table.Column<int>(type: "int", nullable: false),
                     IsVerified = table.Column<bool>(type: "bit", nullable: false),
-                    VerificationCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VerificationCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Street = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    State = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ZipCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastLoginAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -450,12 +443,12 @@ namespace ORAA.Migrations
                     RefreshTokenExpiresAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
                     PasswordResetCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GoogleId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PurchasesId = table.Column<int>(type: "int", nullable: false),
-                    ChatsId = table.Column<int>(type: "int", nullable: false),
-                    DiscountCodesId = table.Column<int>(type: "int", nullable: false),
-                    GIftCardId = table.Column<int>(type: "int", nullable: false),
-                    GiftId = table.Column<int>(type: "int", nullable: false),
-                    NotificationId = table.Column<int>(type: "int", nullable: false),
+                    PurchasesId = table.Column<int>(type: "int", nullable: true),
+                    ChatsId = table.Column<int>(type: "int", nullable: true),
+                    DiscountCodesId = table.Column<int>(type: "int", nullable: true),
+                    GIftCardId = table.Column<int>(type: "int", nullable: true),
+                    GiftId = table.Column<int>(type: "int", nullable: true),
+                    NotificationId = table.Column<int>(type: "int", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -477,26 +470,22 @@ namespace ORAA.Migrations
                         name: "FK_AspNetUsers_DiscountCodes_DiscountCodesId",
                         column: x => x.DiscountCodesId,
                         principalTable: "DiscountCodes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_AspNetUsers_GIftCards_GIftCardId",
                         column: x => x.GIftCardId,
                         principalTable: "GIftCards",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_AspNetUsers_Gifts_GiftId",
                         column: x => x.GiftId,
                         principalTable: "Gifts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_AspNetUsers_Purchases_PurchasesId",
                         column: x => x.PurchasesId,
                         principalTable: "Purchases",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -975,16 +964,14 @@ namespace ORAA.Migrations
                 table: "AspNetUsers",
                 column: "ChatsId",
                 principalTable: "Chats",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_AspNetUsers_Notifications_NotificationId",
                 table: "AspNetUsers",
                 column: "NotificationId",
                 principalTable: "Notifications",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />

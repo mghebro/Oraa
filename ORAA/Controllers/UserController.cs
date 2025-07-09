@@ -32,25 +32,62 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
-    [HttpPost("Register")]
-    public async Task<IActionResult> RegisterUser([FromBody] AddUser request)
+    [HttpPost("register")]
+    public async Task<ActionResult> Register(AddUser request)
     {
-        
-        var response = await _userService.RegisterUser(request);
-       
-        return Ok(response);
+        var User = await _userService.RegisterUser(request);
+        return Ok(User);
     }
 
-    [HttpGet("")]
-
-    [HttpPost("Login")]
-    public async Task<IActionResult> Login(string email, string password)
+    [HttpPost("verify-email/{email}/{code}")]
+    public async Task<ActionResult> Verify(string email, string code)
     {
-        var response = await _userService.Login(email , password);
-        
-            var userToken = response.Data;
-            _jwtService.WriteAuthTokenAsHttpOnlyCookie("auth_token", userToken.Token, DateTime.Now.AddMinutes(30));
-        
-        return Ok(response);
+        var VerifiedUser = await _userService.Verify(email, code);
+        return Ok(VerifiedUser);
+    }
+
+    [HttpGet("get-profile")]
+    //[Authorize]
+    public ActionResult GetProfile(int id)
+    {
+        var getProfile = _userService.GetProfile(id);
+        return Ok(getProfile);
+    }
+
+    [HttpPost("get-reset-code")]
+    public ActionResult GetResetCode(string userEmail)
+    {
+        var getResetCode = _userService.GetResetCode(userEmail);
+        return Ok(getResetCode);
+    }
+
+    [HttpPut("reset-password")]
+    public async Task<ActionResult> ResetPassword(string email, string code, string newPassword)
+    {
+        var resetPassword = await _userService.ResetPassword(email, code, newPassword);
+        return Ok(resetPassword);
+    }
+
+    [HttpPost("login")]
+    public async Task<ActionResult> Login(string email, string password)
+    {
+        var userlogin = await _userService.Login(email, password);
+        return Ok(userlogin);
+    }
+
+    [HttpPut("update-user")]
+    public async Task<ActionResult> UpdateUser(int id, string changeParamert, string changeTo)
+    {
+        var user = await _userService.UpdateUser(id, changeParamert, changeTo);
+
+        return Ok(user);
+    }
+
+    [HttpDelete("delete-user")]
+    public ActionResult DeleteUser(int id)
+    {
+        var user = _userService.DeleteUser(id);
+
+        return Ok(user);
     }
 }

@@ -5,10 +5,29 @@ namespace ORAA.DTO
     public class UserDTO
     {
         public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public ACCOUNT_STATUS Status { get; set; }
-        public ROLES Role { get; set; }
-        public string Email { get; set; }
+
+        public string FirstName { get; set; } = string.Empty;
+
+        public string LastName { get; set; } = string.Empty;
+
+        public string Email { get; set; } = string.Empty;
+
+        public string? PhoneNumber { get; set; }
+
+        public DateTime? DateOfBirth { get; set; }
+
+        public bool IsVerified { get; set; }
+
+        public bool EmailNotifications { get; set; }
+
+        public bool SmsNotifications { get; set; }
+
+        public bool PushNotifications { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime? LastLoginAt { get; set; }
+
+        public string Role { get; set; } = ROLES.USER.ToString();
     }
 }
