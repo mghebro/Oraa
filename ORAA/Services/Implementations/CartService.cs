@@ -35,7 +35,6 @@ namespace ORAA.Services.Implementations
                     Message = "User not found."
                 };
             }
-
             if (request.DiscountCodeId.HasValue)
             {
                 var discountExists = await _context.DiscountCodes.AnyAsync(d => d.Id == request.DiscountCodeId.Value);
@@ -49,7 +48,6 @@ namespace ORAA.Services.Implementations
                     };
                 }
             }
-
             if (request.GiftCardId.HasValue)
             {
                 var giftCardExists = await _context.GIftCards.AnyAsync(g => g.Id == request.GiftCardId.Value);
@@ -63,7 +61,6 @@ namespace ORAA.Services.Implementations
                     };
                 }
             }
-
             if (request.Subtotal < 0 || request.DiscountAmount < 0 || request.Total < 0)
             {
                 return new ApiResponse<Cart>

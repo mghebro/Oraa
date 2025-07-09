@@ -188,8 +188,8 @@ namespace ORAA.Services.Implementations
             user.VerificationCode = randomCode;
 
             // Send verification email
-            SMTPService smtpService = new SMTPService();
-            smtpService.SendEmail(user.Email, "Verification", $"<p>{user.VerificationCode}</p>");
+            //SMTPService smtpService = new SMTPService();
+            //smtpService.SendEmail(user.Email, "Verification", $"<p>{user.VerificationCode}</p>");
 
             // Create user using UserManager
             var createResult = await _userManager.CreateAsync(user, request.Password);
@@ -330,9 +330,9 @@ namespace ORAA.Services.Implementations
 
                     user.PasswordResetCode = randomCode;
 
-                    SMTPService smtpService = new SMTPService();
+                  //  SMTPService smtpService = new SMTPService();
 
-                    smtpService.SendEmail(user.Email, "Reset Code", $"<p>{user.PasswordResetCode}</p>");
+                   // smtpService.SendEmail(user.Email, "Reset Code", $"<p>{user.PasswordResetCode}</p>");
 
                     _context.SaveChanges();
 

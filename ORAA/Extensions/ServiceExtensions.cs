@@ -75,7 +75,7 @@ public static class ServiceExtensions
     {
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICartService, CartService>();
-
+        services.AddScoped<IJewelryService, JewelryService>();
 
         // Apple payment service
         //       services.AddScoped<IApplePaymentService, ApplePaymentService>();

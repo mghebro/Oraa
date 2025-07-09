@@ -12,7 +12,7 @@ using ORAA.Data;
 namespace ORAA.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250708150901_init")]
+    [Migration("20250709112830_init")]
     partial class init
     {
         /// <inheritdoc />
