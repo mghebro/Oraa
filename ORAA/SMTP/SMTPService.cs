@@ -38,8 +38,8 @@ namespace ORAA.SMTP
         }
         public void SendEmail(string toAddress, string subject, string body)
         {
-            string senderEmail = "k.maminaishvili@gmail.com";
-            string appPassword = "ykws duyg kznm rhiu";
+            string senderEmail = "khulelidzeliza@gmail.com";
+            string appPassword = "zeil smiy tjgb htjv";
 
 
             MailMessage mail = new MailMessage();

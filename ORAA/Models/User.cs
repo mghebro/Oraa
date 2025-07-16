@@ -10,16 +10,9 @@ namespace ORAA.Models
         public ACCOUNT_STATUS Status { get; set; } = ACCOUNT_STATUS.CODE_SENT;
         public ROLES Role { get; set; } = ROLES.USER;
         public bool IsVerified { get; set; }
-        public string VerificationCode { get; set; }
-        public string PhoneNumber { get; set; }
+        public string? VerificationCode { get; set; }
+        public string? PhoneNumber { get; set; }
         public DateTime? DateOfBirth { get; set; }
-        public string Gender { get; set; }
-        public string Avatar { get; set; }
-        public string Street { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-        public string ZipCode { get; set; }
-        public string Country { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? LastLoginAt { get; set; }
@@ -32,14 +25,15 @@ namespace ORAA.Models
         public DateTime? RefreshTokenExpiresAtUtc { get; set; }
         public string? PasswordResetCode { get; set; }
         public string? GoogleId { get; set; }
+        public string? AppleId { get; set; }    
         // Navigation properties for related entities
-        public Purchase Purchases { get; set; }
-        public Chat Chats { get; set; }
-        public DiscountCode DiscountCodes { get; set; }
-        public GIftCard GIftCard { get; set; }
-        public Gift Gift { get; set; }  
-        public Favorite Favorite { get; set; }
-        public Review Review { get; set; }
-        public Notification Notification { get; set; }
+        public Purchase? Purchases { get; set; }
+        public Chat? Chats { get; set; }
+        public DiscountCode? DiscountCodes { get; set; }
+        public GIftCard? GIftCard { get; set; }
+        public Gift? Gift { get; set; }  
+        public Favorite? Favorite { get; set; }
+        public Review? Review { get; set; }
+        public Notification? Notification { get; set; }
     }
 }
