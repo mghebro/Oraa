@@ -16,11 +16,11 @@
         public int UserId { get; set; }
         public User User { get; set; }
 
-        public int ShippingAddressId { get; set; }
-        public ShippingAddresses ShippingAddress { get; set; }
+        //public int ShippingAddressId { get; set; }
+        //public ShippingAddresses ShippingAddress { get; set; }
 
         public int? GiftCardId { get; set; }
-        public GiftCard GiftCard { get; set; }
+        public GIftCard GiftCard { get; set; }
 
         public int? DiscountCodeId { get; set; }
         public DiscountCode DiscountCode { get; set; }
