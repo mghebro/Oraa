@@ -15,5 +15,11 @@ public class Affirmation
     public int CreatedBy { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    //zenora
+    public int ConsultantId { get; set; }
+    public Consultant Consultant { get; set; }
+
+    public int JeweleryId { get; set; }
+    public Jewelery Jewelery { get; set; }
 
 }

@@ -71,11 +71,7 @@ namespace ORAA.Data
                 .HasForeignKey("ReviewId")
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Jewelery>()
-                .HasOne(j => j.Notification)
-                .WithMany()
-                .HasForeignKey("NotificationId")
-                .OnDelete(DeleteBehavior.Restrict);
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

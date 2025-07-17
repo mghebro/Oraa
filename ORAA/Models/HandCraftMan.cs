@@ -16,9 +16,10 @@
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        public Material Material { get; set; }
-        public Crystal Crystal { get; set; }
-        public Notification Notification { get; set; }
+
+        public List<Material> Material { get; set; }
+        public List<Crystal> Crystal { get; set; }
+        public List<Jewelery> jeweleries { get; set; }
 
     }
 }

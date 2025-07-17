@@ -20,11 +20,14 @@
         public string SeoKeywords { get; set; }
         public int ReadingTime { get; set; }
         public int ViewCount { get; set; }
-        public string RelatedCrystals { get; set; }
-        public string RelatedJewelry { get; set; }
-        public string RelatedRitual { get; set; }
+        public List<Crystal>? RelatedCrystals { get; set; }
+        public List<Jewelery>? RelatedJewelry { get; set; }
+        public List<Ritual>? RelatedRitual { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+        public User User { get; set; }
+        public int UserId { get; set; }
 
     }
 }

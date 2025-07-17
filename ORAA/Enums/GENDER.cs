@@ -2,8 +2,8 @@
 {
     public enum GENDER
     {
-        WOMEN ,
-        MAN ,
+        WOMEN,
+        MAN,
         OTHER
     }
 }

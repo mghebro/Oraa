@@ -190,6 +190,8 @@ namespace ORAA.Services.Implementations
             user.VerificationCode = randomCode;
 
             // Send verification email
+            string code = SMTPService.SendVerificationCode(user.Email, user.FirstName);
+            user.VerificationCode = code;
             SMTPService smtpService = new SMTPService();
             smtpService.SendEmail(user.Email, "Verification", smtpService.GetVerificationEmailHtml(user.VerificationCode));
 
@@ -335,7 +337,8 @@ namespace ORAA.Services.Implementations
 
                     SMTPService smtpService = new SMTPService();
 
-                    smtpService.SendEmail(user.Email, "Reset Code", $"<p>{user.PasswordResetCode}</p>");
+                    string code = SMTPService.SendVerificationCode(user.Email, user.FirstName);
+                    user.VerificationCode = code;
 
                     _context.SaveChanges();
 

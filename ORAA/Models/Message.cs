@@ -3,14 +3,18 @@
     public class Message
     {
         public int Id { get; set; }
-        public string Participants { get; set; }
-        public string Type { get; set; }
-        public string Title { get; set; }
-        public int? LastMessageId { get; set; }
-        public bool IsActive { get; set; }
-        public int? ConsultantId { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public int SenderId { get; set; }
+        public string Content { get; set; }
+        public string MessageType { get; set; }
+        public string Attachments { get; set; }
+        public bool IsRead { get; set; }
+        public string ReadBy { get; set; }
         public DateTime UpdatedAt { get; set; }
 
+        public int ChatId { get; set; }
+        public Chat Chat { get; set; }
+
+        public int SenderUserId { get; set; }
+        public User Sender { get; set; }
     }
 }
