@@ -163,10 +163,12 @@ namespace ORAA.Services.Implementations
                 return response;
             }
 
-            var user = _mapper.Map<User>(request);
+           var user = _mapper.Map<User>(request);
 
             // Set UserName to Email (required by Identity)
             user.UserName = user.Email;
+            user.CreatedAt = DateTime.UtcNow;
+            user.UpdatedAt = DateTime.UtcNow;
 
             var validator = new UserValidator();
             var result = validator.Validate(user);
@@ -190,6 +192,8 @@ namespace ORAA.Services.Implementations
             // Send verification email
             string code = SMTPService.SendVerificationCode(user.Email, user.FirstName);
             user.VerificationCode = code;
+            SMTPService smtpService = new SMTPService();
+            smtpService.SendEmail(user.Email, "Verification", smtpService.GetVerificationEmailHtml(user.VerificationCode));
 
             // Create user using UserManager
             var createResult = await _userManager.CreateAsync(user, request.Password);
@@ -203,6 +207,7 @@ namespace ORAA.Services.Implementations
                     Status = StatusCodes.Status200OK,
                     Message = "User registered successfully. Please check your email for verification code.",
                 };
+                await _context.SaveChangesAsync();
                 return successResponse;
             }
             else
@@ -217,11 +222,12 @@ namespace ORAA.Services.Implementations
                 };
                 return failureResponse;
             }
+
         }
 
         public async Task<ApiResponse<bool>> Verify(string email, string code)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
             if (user == null)
             {
@@ -234,14 +240,13 @@ namespace ORAA.Services.Implementations
 
                 return notfoundRequest;
             }
-            else
-            {
+           
                 if (user.VerificationCode == code)
                 {
                     user.Status = ACCOUNT_STATUS.VERIFIED;
                     user.VerificationCode = null;
 
-                    _context.SaveChanges();
+                    _context.SaveChangesAsync();
                     var SuccesResponse = new ApiResponse<bool>
                     {
                         Data = true,
@@ -260,7 +265,7 @@ namespace ORAA.Services.Implementations
                     };
                     return BadRequestResponse;
                 }
-            }
+            
         }
 
         public async Task<ApiResponse<UserDTO>> GetProfile(int id)
@@ -478,4 +483,3 @@ namespace ORAA.Services.Implementations
         }
     }
 }
-

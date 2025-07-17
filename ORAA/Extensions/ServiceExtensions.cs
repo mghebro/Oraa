@@ -74,12 +74,12 @@ public static class ServiceExtensions
     private static IServiceCollection AddBusinessServices(this IServiceCollection services)
     {
         services.AddScoped<IUserService, UserService>();
-    
-
+        services.AddScoped<ICartService, CartService>();
+        services.AddScoped<IJewelryService, JewelryService>();
 
         // Apple payment service
-      //       services.AddScoped<IApplePaymentService, ApplePaymentService>();
-       //      services.AddHttpClient<IApplePaymentService, ApplePaymentService>();
+        //       services.AddScoped<IApplePaymentService, ApplePaymentService>();
+        //      services.AddHttpClient<IApplePaymentService, ApplePaymentService>();
 
         return services;
     }

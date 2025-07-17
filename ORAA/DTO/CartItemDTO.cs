@@ -1,6 +1,5 @@
-﻿namespace ORAA.DTO
+﻿namespace ORAA.DTO;
+public class CartItemDTO
 {
-    public class CartItemDTO
-    {
-    }
+    public int Quantity { get; set; }
 }

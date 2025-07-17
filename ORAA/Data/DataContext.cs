@@ -2,8 +2,6 @@
 using ORAA.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using ORAA.Models;
-
 
 namespace ORAA.Data
 {

@@ -93,9 +93,7 @@ namespace ORAA.SMTP
             await smtpClient.SendMailAsync(mail);
             return verificationCode;
         }
-
-        // Synchronous version if needed
-        public static string SendVerificationCode(string toEmail, string userName)
+        public void SendEmail(string to, string subject, string body)
         {
             string verificationCode = GenerateVerificationCode();
 
@@ -143,23 +141,22 @@ namespace ORAA.SMTP
 </html>
 ";
 
-            using var mail = new MailMessage();
-            mail.From = new MailAddress(SenderEmail, "ORA");
-            mail.To.Add(toEmail);
-            mail.Subject = "Your Verification Code - ORA";
-            mail.Body = htmlContent;
+            MailMessage mail = new MailMessage();
+            mail.From = new MailAddress(senderEmail);
+            mail.To.Add(toAddress);
+            mail.Subject = subject;
+            mail.Body = body;
             mail.IsBodyHtml = true;
 
-            using var smtpClient = new SmtpClient("smtp.gmail.com")
+            var smtpClient = new SmtpClient("smtp.gmail.com")
             {
                 Port = 587,
                 EnableSsl = true,
-                Credentials = new NetworkCredential(SenderEmail, AppPassword),
+                Credentials = new NetworkCredential(senderEmail, appPassword)
             };
 
             smtpClient.Send(mail);
-            return verificationCode;
+
         }
     }
 }
-

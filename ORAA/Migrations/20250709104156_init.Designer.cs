@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ORAA.Data;
 
@@ -11,9 +12,11 @@ using ORAA.Data;
 namespace ORAA.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250709104156_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -447,9 +450,6 @@ namespace ORAA.Migrations
                     b.Property<int>("JewelryId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PurchaseId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -467,12 +467,6 @@ namespace ORAA.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-
-                    b.HasIndex("PurchaseId");
-
-                    b.HasIndex("CartId");
-
 
                     b.ToTable("CartItems");
                 });
@@ -708,9 +702,6 @@ namespace ORAA.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("CrystalId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsPublic")
                         .HasColumnType("bit");
 
@@ -718,24 +709,17 @@ namespace ORAA.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("JewelryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CrystalId");
-
-                    b.HasIndex("JewelryId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -1185,6 +1169,9 @@ namespace ORAA.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -1192,14 +1179,11 @@ namespace ORAA.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("DiscountCodeId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Engraving")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("GiftCardId")
+                    b.Property<int>("JewelryId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -1218,17 +1202,7 @@ namespace ORAA.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("DiscountCodeId");
-
-                    b.HasIndex("GiftCardId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Purchases");
                 });
@@ -1391,9 +1365,6 @@ namespace ORAA.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("AppleId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("ChatsId")
                         .HasColumnType("int");
 
@@ -1478,7 +1449,6 @@ namespace ORAA.Migrations
                     b.Property<int?>("PurchasesId")
                         .HasColumnType("int");
 
-
                     b.Property<bool>("PushNotifications")
                         .HasColumnType("bit");
 
@@ -1532,6 +1502,8 @@ namespace ORAA.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.HasIndex("NotificationId");
+
+                    b.HasIndex("PurchasesId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -1598,20 +1570,6 @@ namespace ORAA.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ORAA.Models.CartItem", b =>
-                {
-                    b.HasOne("ORAA.Models.Purchase", null)
-                        .WithMany("CartItems")
-                        .HasForeignKey("PurchaseId");
-                    b.HasOne("ORAA.Models.Cart", "Cart")
-                        .WithMany("CartItems")
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cart");
-                });
-
             modelBuilder.Entity("ORAA.Models.Chat", b =>
                 {
                     b.HasOne("ORAA.Models.Consultant", null)
@@ -1632,25 +1590,11 @@ namespace ORAA.Migrations
 
             modelBuilder.Entity("ORAA.Models.Favorite", b =>
                 {
-                    b.HasOne("ORAA.Models.Crystal", "Crystal")
-                        .WithMany()
-                        .HasForeignKey("CrystalId");
-
-                    b.HasOne("ORAA.Models.Jewelery", "Jewelry")
-                        .WithMany()
-                        .HasForeignKey("JewelryId");
-
-                    b.HasOne("ORAA.Models.User", "User")
+                    b.HasOne("ORAA.Models.User", null)
                         .WithOne("Favorite")
                         .HasForeignKey("ORAA.Models.Favorite", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Crystal");
-
-                    b.Navigation("Jewelry");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ORAA.Models.Gift", b =>
@@ -1745,29 +1689,6 @@ namespace ORAA.Migrations
                         .HasForeignKey("ORAA.Models.Notification", "ConsultantId");
                 });
 
-            modelBuilder.Entity("ORAA.Models.Purchase", b =>
-                {
-                    b.HasOne("ORAA.Models.DiscountCode", "DiscountCode")
-                        .WithMany()
-                        .HasForeignKey("DiscountCodeId");
-
-                    b.HasOne("ORAA.Models.GIftCard", "GiftCard")
-                        .WithMany()
-                        .HasForeignKey("GiftCardId");
-
-                    b.HasOne("ORAA.Models.User", "User")
-                        .WithOne("Purchases")
-                        .HasForeignKey("ORAA.Models.Purchase", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DiscountCode");
-
-                    b.Navigation("GiftCard");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("ORAA.Models.Review", b =>
                 {
                     b.HasOne("ORAA.Models.User", null)
@@ -1803,7 +1724,6 @@ namespace ORAA.Migrations
                         .WithMany()
                         .HasForeignKey("PurchasesId");
 
-
                     b.Navigation("Chats");
 
                     b.Navigation("DiscountCodes");
@@ -1813,11 +1733,8 @@ namespace ORAA.Migrations
                     b.Navigation("Gift");
 
                     b.Navigation("Notification");
-                });
 
-            modelBuilder.Entity("ORAA.Models.Cart", b =>
-                {
-                    b.Navigation("CartItems");
+                    b.Navigation("Purchases");
                 });
 
             modelBuilder.Entity("ORAA.Models.Consultant", b =>
@@ -1829,16 +1746,9 @@ namespace ORAA.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ORAA.Models.Purchase", b =>
-                {
-                    b.Navigation("CartItems");
-                });
-
             modelBuilder.Entity("ORAA.Models.User", b =>
                 {
                     b.Navigation("Favorite");
-
-                    b.Navigation("Purchases");
 
                     b.Navigation("Review");
                 });
