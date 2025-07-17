@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ORAA.Data;
 
@@ -11,9 +12,11 @@ using ORAA.Data;
 namespace ORAA.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250716130452_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -468,11 +471,7 @@ namespace ORAA.Migrations
 
                     b.HasKey("Id");
 
-
                     b.HasIndex("PurchaseId");
-
-                    b.HasIndex("CartId");
-
 
                     b.ToTable("CartItems");
                 });
@@ -1475,10 +1474,6 @@ namespace ORAA.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("PurchasesId")
-                        .HasColumnType("int");
-
-
                     b.Property<bool>("PushNotifications")
                         .HasColumnType("bit");
 
@@ -1603,13 +1598,6 @@ namespace ORAA.Migrations
                     b.HasOne("ORAA.Models.Purchase", null)
                         .WithMany("CartItems")
                         .HasForeignKey("PurchaseId");
-                    b.HasOne("ORAA.Models.Cart", "Cart")
-                        .WithMany("CartItems")
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cart");
                 });
 
             modelBuilder.Entity("ORAA.Models.Chat", b =>
@@ -1799,11 +1787,6 @@ namespace ORAA.Migrations
                         .WithMany()
                         .HasForeignKey("NotificationId");
 
-                    b.HasOne("ORAA.Models.Purchase", "Purchases")
-                        .WithMany()
-                        .HasForeignKey("PurchasesId");
-
-
                     b.Navigation("Chats");
 
                     b.Navigation("DiscountCodes");
@@ -1813,11 +1796,6 @@ namespace ORAA.Migrations
                     b.Navigation("Gift");
 
                     b.Navigation("Notification");
-                });
-
-            modelBuilder.Entity("ORAA.Models.Cart", b =>
-                {
-                    b.Navigation("CartItems");
                 });
 
             modelBuilder.Entity("ORAA.Models.Consultant", b =>

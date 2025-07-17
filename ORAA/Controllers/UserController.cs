@@ -20,7 +20,7 @@ namespace ORAA.Controllers;
 public class UserController : ControllerBase
 {
     private readonly DataContext _context;
-    private readonly IJWTService _jwtService;
+    private readonly IJWTService _jwtService;   
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
 

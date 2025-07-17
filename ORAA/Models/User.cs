@@ -24,7 +24,7 @@ namespace ORAA.Models
         public DateTime? RefreshTokenExpiresAtUtc { get; set; }
         public string? PasswordResetCode { get; set; }
         public string? GoogleId { get; set; }
-
+        public string? AppleId { get; set; }    
         // Navigation properties for related entities
         public Purchase? Purchases { get; set; }
         public Chat? Chats { get; set; }
