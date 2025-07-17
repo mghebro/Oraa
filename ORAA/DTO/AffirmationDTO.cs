@@ -1,6 +1,5 @@
-﻿namespace ORAA.DTO
+﻿namespace ORAA.DTO;
+
+public class AffirmationDTO
 {
-    public class AffirmationDTO
-    {
-    }
 }

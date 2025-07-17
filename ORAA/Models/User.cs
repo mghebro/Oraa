@@ -20,7 +20,6 @@ namespace ORAA.Models
         public bool EmailNotifications { get; set; }
         public bool SmsNotifications { get; set; }
         public bool PushNotifications { get; set; }
-
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiresAtUtc { get; set; }
         public string? PasswordResetCode { get; set; }
