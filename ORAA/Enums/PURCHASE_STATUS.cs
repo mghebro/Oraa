@@ -2,10 +2,10 @@
 {
     public enum PUCHASE_STATUS
     {
-        PENDING ,
-        SUCCESFULL ,
-        DECLINED ,
-        CANCELED , 
+        PENDING,
+        SUCCESFULL,
+        DECLINED,
+        CANCELED, 
 
     }
 }

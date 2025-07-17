@@ -12,14 +12,13 @@ namespace ORAA.Models
         public bool IsVerified { get; set; }
         public string? VerificationCode { get; set; }
         public string? PhoneNumber { get; set; }
-        public DateTime? DateOfBirth { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        //public DateTime? DateOfBirth { get; set; }
+      //public DateTime CreatedAt { get; set; }
+      //public DateTime UpdatedAt { get; set; }
         public DateTime? LastLoginAt { get; set; }
         public bool IsActive { get; set; }
-        public bool EmailNotifications { get; set; }
-        public bool SmsNotifications { get; set; }
-        public bool PushNotifications { get; set; }
+//      public bool EmailNotifications { get; set; }
+  //    public bool SmsNotifications { get; set; }
 
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiresAtUtc { get; set; }
@@ -27,13 +26,19 @@ namespace ORAA.Models
         public string? GoogleId { get; set; }
         public string? AppleId { get; set; }    
         // Navigation properties for related entities
-        public Purchase? Purchases { get; set; }
-        public Chat? Chats { get; set; }
-        public DiscountCode? DiscountCodes { get; set; }
-        public GIftCard? GIftCard { get; set; }
-        public Gift? Gift { get; set; }  
-        public Favorite? Favorite { get; set; }
-        public Review? Review { get; set; }
-        public Notification? Notification { get; set; }
+
+        public UserDetails? UserDetails { get; set; }
+        public int? UserDetailsId { get; set; }
+      //public Admin? Admin { get; set; }
+        //public List<Purchase>? Purchases { get; set; }
+      //public List<Affirmation>? Affirmation { get; set; }
+        public List<Chat>? Chats { get; set; }
+        public List<DiscountCode>? DiscountCodes { get; set; }
+        public List<GIftCard>? GIftCards { get; set; }
+        public List<Gift>? Gifts { get; set; }  
+        public Cart? Cart { get; set; }
+        public List<Favorite>? Favorites { get; set; }
+        public List<Review>? Reviews { get; set; }
+        public List<Notification>? Inbox { get; set; }
     }
 }

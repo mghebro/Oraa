@@ -2,8 +2,10 @@
 {
     public enum ROLES
     {
-        USER,
-        HOST,
-        ADMIN
+        USER,       
+        ADMIN,
+        CONSULTANT,
+        HANDCRAFTMAN,
+
     }
 }

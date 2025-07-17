@@ -3,7 +3,6 @@
     public class Gift
     {
         public int Id { get; set; }
-        public int SenderId { get; set; }
         public int? RecipientId { get; set; }
         public string RecipientEmail { get; set; }
         public int JewelryId { get; set; }
@@ -17,6 +16,10 @@
         public DateTime UpdatedAt { get; set; }
 
         public Crystal Crystal { get; set; }
+        public Jewelery Jewelry { get; set; }
+        public User Sender { get; set; }
+        public int SenderId { get; set; }
+        public User Recipient { get; set; }
 
     }
 }

@@ -11,14 +11,13 @@
         public string Materials { get; set; }
         public string CrystalsNeeded { get; set; }
         public string JewelryRecommended { get; set; }
-        public string StepsOfRitual { get; set; }
-        public string MoonPhase { get; set; }
-        public string SeasonalAlignment { get; set; }
-        public string ChakraFocus { get; set; }
         public bool IsActive { get; set; }
         public int CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
+
+        public Jewelery? jewelery { get; set; }
+        public Crystal? crystal { get; set; }
     }
 }
