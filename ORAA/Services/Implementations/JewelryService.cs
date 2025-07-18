@@ -41,11 +41,11 @@ namespace ORAA.Services.Implementations
                 );
             }
 
-            if (!string.IsNullOrWhiteSpace(request.Category))
-            {
-                var category = request.Category.ToLower();
-                query = query.Where(j => EF.Functions.Like(j.Category.ToLower(), $"%{category}%"));
-            }
+            //if (!string.IsNullOrWhiteSpace(request.Category))
+            //{
+            //    var category = request.Category.ToLower();
+            //    query = query.Where(j => EF.Functions.Like(j.Category.ToLower(), $"%{category}%"));
+            //}
 
             if (request.MinPrice.HasValue)
                 query = query.Where(j => j.Price >= request.MinPrice.Value);

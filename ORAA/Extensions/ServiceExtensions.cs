@@ -13,6 +13,7 @@ using ORAA.Models;
 using ORAA.Services.Implementations;
 using ORAA.Services.Interfaces;
 using ORAA.Data;
+using ORAA.Models.Apple;
 
 namespace ORAA.Extensions;
 
@@ -76,7 +77,10 @@ public static class ServiceExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICartService, CartService>();
         services.AddScoped<IJewelryService, JewelryService>();
-
+        services.AddScoped<ICollectionsService, CollectionService>();
+        services.AddScoped<IAppleService, AppleService>();
+        services.AddHttpClient<IAppleService, AppleService>();
+        services.AddScoped<AppleUser>();
         // Apple payment service
         //       services.AddScoped<IApplePaymentService, ApplePaymentService>();
         //      services.AddHttpClient<IApplePaymentService, ApplePaymentService>();
@@ -101,17 +105,6 @@ public static class ServiceExtensions
             options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
         })
             .AddCookie()
-            .AddGoogle(options =>
-            {
-                var clientId = configuration["Authentication:Google:ClientId"] ??
-                    throw new ArgumentNullException("Authentication:Google:ClientId");
-                var clientSecret = configuration["Authentication:Google:ClientSecret"] ??
-                    throw new ArgumentNullException("Authentication:Google:ClientSecret");
-
-                options.ClientId = clientId;
-                options.ClientSecret = clientSecret;
-                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            })
             .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -150,11 +143,34 @@ public static class ServiceExtensions
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining<Program>();
 
+        // UPDATED CORS CONFIGURATION - This is where you add the new CORS settings
         services.AddCors(options =>
         {
             options.AddDefaultPolicy(builder =>
             {
-                builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                builder
+                    .WithOrigins(
+                        "https://mghebro-auth-test-angular.netlify.app",
+                        "https://mghebro-auth-test.netlify.app",
+                        "http://localhost:4200",  // For local development
+                        "https://localhost:4200"  // For local HTTPS development
+                    )
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+
+            // You can also add a named policy for more specific scenarios
+            options.AddPolicy("AppleAuthPolicy", builder =>
+            {
+                builder
+                    .WithOrigins(
+                        "https://mghebro-auth-test-angular.netlify.app",
+                        "https://mghebro-auth-test.netlify.app"
+                    )
+                    .WithHeaders("Content-Type", "Authorization", "ngrok-skip-browser-warning")
+                    .WithMethods("GET", "POST", "OPTIONS")
+                    .AllowCredentials();
             });
         });
 

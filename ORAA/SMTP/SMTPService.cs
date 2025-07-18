@@ -142,8 +142,8 @@ namespace ORAA.SMTP
 ";
 
             MailMessage mail = new MailMessage();
-            mail.From = new MailAddress(senderEmail);
-            mail.To.Add(toAddress);
+            mail.From = new MailAddress(SenderEmail);
+            mail.To.Add(to);
             mail.Subject = subject;
             mail.Body = body;
             mail.IsBodyHtml = true;
@@ -152,7 +152,7 @@ namespace ORAA.SMTP
             {
                 Port = 587,
                 EnableSsl = true,
-                Credentials = new NetworkCredential(senderEmail, appPassword)
+                Credentials = new NetworkCredential(SenderEmail, AppPassword)
             };
 
             smtpClient.Send(mail);

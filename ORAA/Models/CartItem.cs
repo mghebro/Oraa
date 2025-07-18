@@ -14,7 +14,6 @@
         public Cart Cart { get; set; }
 
         public int CartId { get; set; }
-        public Cart Cart { get; set; }
 
         public int? JewelryId { get; set; }
         public Jewelery Jewelry { get; set; }

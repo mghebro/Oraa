@@ -36,7 +36,8 @@ namespace ORAA.Data
         public DbSet<Crystal> Crystals { get; set; }
         public DbSet<Material> Materials { get; set; }
         public DbSet<User> Users { get; set; }
-
+        public DbSet<Collections> Collections { get; set; }
+        public DbSet<ProductDetails> ProductDetails { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -70,7 +71,15 @@ namespace ORAA.Data
                 .WithMany()
                 .HasForeignKey("ReviewId")
                 .OnDelete(DeleteBehavior.Restrict);
+        {
 
+          
+            modelBuilder.Entity<Admin>()
+                .HasMany(a => a.Gifts)
+                .WithOne() 
+                .HasForeignKey("AdminId") 
+                .OnDelete(DeleteBehavior.Cascade);
+        }
 
         }
 

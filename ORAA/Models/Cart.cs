@@ -15,7 +15,6 @@
 
         public User User { get; set; }
         public int UserId { get; set; }
-        public List<CartItem> CartItems { get; set; } = new();
 
     }
 }

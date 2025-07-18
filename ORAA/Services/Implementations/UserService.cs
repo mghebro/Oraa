@@ -167,8 +167,7 @@ namespace ORAA.Services.Implementations
 
             // Set UserName to Email (required by Identity)
             user.UserName = user.Email;
-            user.CreatedAt = DateTime.UtcNow;
-            user.UpdatedAt = DateTime.UtcNow;
+           
 
             var validator = new UserValidator();
             var result = validator.Validate(user);
@@ -190,10 +189,10 @@ namespace ORAA.Services.Implementations
             user.VerificationCode = randomCode;
 
             // Send verification email
-            string code = SMTPService.SendVerificationCode(user.Email, user.FirstName);
+            string code = await SMTPService.SendVerificationCodeAsync(user.Email, user.FirstName);
             user.VerificationCode = code;
             SMTPService smtpService = new SMTPService();
-            smtpService.SendEmail(user.Email, "Verification", smtpService.GetVerificationEmailHtml(user.VerificationCode));
+            smtpService.SendEmail(user.Email, "Verification", $"Your verification code is: {user.VerificationCode}");
 
             // Create user using UserManager
             var createResult = await _userManager.CreateAsync(user, request.Password);
@@ -337,7 +336,10 @@ namespace ORAA.Services.Implementations
 
                     SMTPService smtpService = new SMTPService();
 
-                    string code = SMTPService.SendVerificationCode(user.Email, user.FirstName);
+                    // Replace this line:
+
+                    // With this corrected line:
+                    string code = await SMTPService.SendVerificationCodeAsync(user.Email, user.FirstName);
                     user.VerificationCode = code;
 
                     _context.SaveChanges();
