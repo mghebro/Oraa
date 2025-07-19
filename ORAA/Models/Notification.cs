@@ -16,7 +16,5 @@
 
         public User User { get; set; }
         public int UserId { get; set; }
-        public int? ConsultantId { get; set; }
-        public Consultant? Consultant { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using ORAA.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace ORAA.Data
 {
@@ -36,14 +37,14 @@ namespace ORAA.Data
         public DbSet<Crystal> Crystals { get; set; }
         public DbSet<Material> Materials { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Collections> Collections { get; set; }
+        public DbSet<UserDetails> UserDetails { get; set; }
+        public DbSet<OrderHistory> orderHistories { get; set; }
+        public DbSet<Collection> Collections { get; set; }
         public DbSet<ProductDetails> ProductDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // Configure User entity
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(e => e.CreatedAt)
@@ -60,234 +61,65 @@ namespace ORAA.Data
                     .IsUnique()
                     .HasFilter("[GoogleId] IS NOT NULL");
             });
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.UserDetails)
+                .WithOne(ud => ud.User)
+                .HasForeignKey<UserDetails>(ud => ud.UserId);
 
-            // FIXED: Admin relationship - no inheritance, just reference
-            modelBuilder.Entity<Admin>(entity =>
-            {
-                entity.HasOne(a => a.User)
-                    .WithMany() // User doesn't need navigation back to Admin
-                    .HasForeignKey(a => a.UserId)
-                    .OnDelete(DeleteBehavior.Restrict); // Use Restrict to avoid cycles
-            });
-
-            // Jewelry relationships
             modelBuilder.Entity<Jewelery>()
                 .HasOne(j => j.HandCraftMan)
-                .WithMany(h => h.jeweleries)
+                .WithMany() // Or WithMany(h => h.Jewelries) if defined
                 .HasForeignKey(j => j.HandCraftManId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict); // 👈 prevent cascade here
 
             modelBuilder.Entity<Jewelery>()
                 .HasOne(j => j.Material)
-                .WithMany()
+                .WithMany() // Or WithMany(m => m.Jewelries)
                 .HasForeignKey(j => j.MaterialId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade); // 👈 allow cascade on only one, if needed
 
             modelBuilder.Entity<Jewelery>()
                 .HasOne(j => j.Affirmation)
                 .WithMany()
-                .HasForeignKey(j => j.AffirmationId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasForeignKey("AffirmationId") // if not explicitly declared in Jewelery class
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Jewelery>()
                 .HasOne(j => j.Ritual)
                 .WithMany()
-                .HasForeignKey(j => j.RitualId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasForeignKey("RitualId")
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Jewelery>()
                 .HasOne(j => j.Review)
                 .WithMany()
-                .HasForeignKey(j => j.ReviewId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            // Cart relationships - Use Restrict to avoid cycles
-            modelBuilder.Entity<Cart>()
-                .HasOne(c => c.User)
-                .WithOne(u => u.Cart)
-                .HasForeignKey<Cart>(c => c.UserId)
-                .OnDelete(DeleteBehavior.Restrict); // Changed from Cascade to Restrict
-
-            modelBuilder.Entity<CartItem>()
-                .HasOne(ci => ci.Cart)
-                .WithMany(c => c.CartItems)
-                .HasForeignKey(ci => ci.CartId)
-                .OnDelete(DeleteBehavior.Cascade); // This is fine as it's not cyclic
-
-            modelBuilder.Entity<CartItem>()
-                .HasOne(ci => ci.Jewelry)
-                .WithMany()
-                .HasForeignKey(ci => ci.JewelryId)
+                .HasForeignKey("ReviewId")
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<CartItem>()
-                .HasOne(ci => ci.Crystal)
-                .WithMany()
-                .HasForeignKey(ci => ci.CrystalId)
+            modelBuilder.Entity<Gift>()
+               .HasOne(g => g.Admin)
+               .WithMany(a => a.Gifts)
+               .HasForeignKey(g => g.AdminId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Admin>()
+                .HasMany(a => a.Gifts)
+                .WithOne(g => g.Admin)
+                .HasForeignKey(g => g.AdminId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Favorite relationships - Use Restrict to avoid cycles
-            modelBuilder.Entity<Favorite>()
-                .HasOne(f => f.User)
-                .WithMany(u => u.Favorites)
-                .HasForeignKey(f => f.UserId)
-                .OnDelete(DeleteBehavior.Restrict); // Changed from Cascade to Restrict
+            modelBuilder.Entity<Consultant>()
+              .HasOne(c => c.Chat)
+              .WithOne(ch => ch.Consultant)
+              .HasForeignKey<Consultant>(c => c.ChatId);
 
-            modelBuilder.Entity<Favorite>()
-                .HasOne(f => f.Jewelry)
-                .WithMany()
-                .HasForeignKey(f => f.JewelryId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Favorite>()
-                .HasOne(f => f.Crystal)
-                .WithMany()
-                .HasForeignKey(f => f.CrystalId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // Chat and Consultant relationships
-            modelBuilder.Entity<Chat>(entity =>
-            {
-                entity.HasOne(c => c.User)
-                    .WithMany(u => u.Chats)
-                    .HasForeignKey(c => c.UserId)
-                    .OnDelete(DeleteBehavior.Restrict); // Changed from Cascade to Restrict
-
-                entity.HasOne(c => c.Consultant)
-                    .WithMany(consultant => consultant.Chats)
-                    .HasForeignKey(c => c.ConsultantId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .IsRequired(false);
-            });
-
-            // Consultant relationships
-            modelBuilder.Entity<Consultant>(entity =>
-            {
-                entity.HasOne(c => c.User)
-                    .WithMany()
-                    .HasForeignKey(c => c.UserId)
-                    .OnDelete(DeleteBehavior.Restrict); // Changed from Cascade to Restrict
-            });
-
-            // Notification relationships
-            modelBuilder.Entity<Notification>(entity =>
-            {
-                entity.HasOne(n => n.User)
-                    .WithMany(u => u.Inbox)
-                    .HasForeignKey(n => n.UserId)
-                    .OnDelete(DeleteBehavior.Restrict); // Changed from Cascade to Restrict
-
-                entity.HasOne(n => n.Consultant)
-                    .WithMany(c => c.Notifications)
-                    .HasForeignKey(n => n.ConsultantId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .IsRequired(false);
-            });
-
-            // Message relationships
             modelBuilder.Entity<Message>()
                 .HasOne(m => m.Chat)
                 .WithMany(c => c.Messages)
                 .HasForeignKey(m => m.ChatId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict); // or DeleteBehavior.NoAction
 
-            modelBuilder.Entity<Message>()
-                .HasOne(m => m.Sender)
-                .WithMany()
-                .HasForeignKey(m => m.SenderUserId)
-                .OnDelete(DeleteBehavior.Restrict);
 
-            // Gift relationships
-            modelBuilder.Entity<Gift>(entity =>
-            {
-                entity.HasOne(g => g.Sender)
-                    .WithMany(u => u.Gifts)
-                    .HasForeignKey(g => g.SenderId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasOne(g => g.Recipient)
-                    .WithMany()
-                    .HasForeignKey(g => g.RecipientId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .IsRequired(false);
-
-                entity.HasOne(g => g.Jewelry)
-                    .WithMany()
-                    .HasForeignKey(g => g.JewelryId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasOne(g => g.Crystal)
-                    .WithMany()
-                    .HasForeignKey(g => g.CrystalId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .IsRequired(false);
-            });
-
-            // Purchase relationships
-            modelBuilder.Entity<Purchase>()
-                .HasOne(p => p.User)
-                .WithMany()
-                .HasForeignKey(p => p.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // Blog relationships
-            modelBuilder.Entity<Blog>()
-                .HasOne(b => b.User)
-                .WithMany()
-                .HasForeignKey(b => b.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // UserDetails relationships
-            modelBuilder.Entity<UserDetails>()
-                .HasOne(ud => ud.User)
-                .WithOne(u => u.UserDetails)
-                .HasForeignKey<UserDetails>(ud => ud.UserId)
-                .OnDelete(DeleteBehavior.Restrict); // Changed from Cascade to Restrict
-
-            // Affirmation relationships
-            modelBuilder.Entity<Affirmation>()
-                .HasOne(a => a.Consultant)
-                .WithMany()
-                .HasForeignKey(a => a.ConsultantId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // ProductDetails relationships
-            modelBuilder.Entity<ProductDetails>()
-                .HasOne(pd => pd.Jewelery)
-                .WithMany()
-                .HasForeignKey(pd => pd.JewelryId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<ProductDetails>()
-                .HasOne(pd => pd.Crystal)
-                .WithMany()
-                .HasForeignKey(pd => pd.CrystalId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            // Configure decimal precision
-            modelBuilder.Entity<Jewelery>()
-                .Property(j => j.Price)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<Jewelery>()
-                .Property(j => j.SalePrice)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<Cart>()
-                .Property(c => c.Subtotal)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<Cart>()
-                .Property(c => c.Total)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<CartItem>()
-                .Property(ci => ci.UnitPrice)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<CartItem>()
-                .Property(ci => ci.TotalPrice)
-                .HasPrecision(18, 2);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -295,32 +127,6 @@ namespace ORAA.Data
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
-            }
-        }
-
-        public override int SaveChanges()
-        {
-            UpdateTimestamps();
-            return base.SaveChanges();
-        }
-
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            UpdateTimestamps();
-            return await base.SaveChangesAsync(cancellationToken);
-        }
-
-        private void UpdateTimestamps()
-        {
-            var entries = ChangeTracker.Entries()
-                .Where(e => e.Entity is User && e.State == EntityState.Modified);
-
-            foreach (var entry in entries)
-            {
-                if (entry.Entity is User user)
-                {
-                    user.UpdateTimestamp();
-                }
             }
         }
     }

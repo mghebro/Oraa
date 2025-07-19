@@ -30,7 +30,7 @@ namespace ORAA.Models
 
         // Navigation properties for related entities
         public UserDetails? UserDetails { get; set; }
-        public int? UserDetailsId { get; set; }
+
         public List<Chat>? Chats { get; set; }
         public List<DiscountCode>? DiscountCodes { get; set; }
         public List<GIftCard>? GIftCards { get; set; }
@@ -57,3 +57,4 @@ namespace ORAA.Models
         }
     }
 }
+

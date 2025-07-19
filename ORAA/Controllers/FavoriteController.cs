@@ -70,6 +70,6 @@ namespace ORAA.Controllers
             var response = await _favoriteService.SortByNameDesc(favorite);
             return Ok(response);
         }
-      
+
     }
 }

@@ -15,7 +15,7 @@ namespace ORAA.Services.Implementations
 {
     public class UserService : IUserService
     {
-       
+
         private readonly DataContext _context;
         private readonly IMapper _mapper;
         private readonly IJWTService _jwtService;
@@ -163,11 +163,10 @@ namespace ORAA.Services.Implementations
                 return response;
             }
 
-           var user = _mapper.Map<User>(request);
+            var user = _mapper.Map<User>(request);
 
             // Set UserName to Email (required by Identity)
             user.UserName = user.Email;
-           
 
             var validator = new UserValidator();
             var result = validator.Validate(user);
@@ -188,11 +187,11 @@ namespace ORAA.Services.Implementations
             string randomCode = rand.Next(10000, 99999).ToString();
             user.VerificationCode = randomCode;
 
-            // Send verification email
-            string code = await SMTPService.SendVerificationCodeAsync(user.Email, user.FirstName);
-            user.VerificationCode = code;
-            SMTPService smtpService = new SMTPService();
-            smtpService.SendEmail(user.Email, "Verification", $"Your verification code is: {user.VerificationCode}");
+            //// Send verification email
+            //string code = SMTPService.SendVerificationCode(user.Email, user.FirstName);
+            //user.VerificationCode = code;
+            //SMTPService smtpService = new SMTPService();
+            //smtpService.SendEmail(user.Email, "Verification", smtpService.GetVerificationEmailHtml(user.VerificationCode));
 
             // Create user using UserManager
             var createResult = await _userManager.CreateAsync(user, request.Password);
@@ -239,32 +238,32 @@ namespace ORAA.Services.Implementations
 
                 return notfoundRequest;
             }
-           
-                if (user.VerificationCode == code)
-                {
-                    user.Status = ACCOUNT_STATUS.VERIFIED;
-                    user.VerificationCode = null;
 
-                    _context.SaveChangesAsync();
-                    var SuccesResponse = new ApiResponse<bool>
-                    {
-                        Data = true,
-                        Message = "User Verified",
-                        Status = StatusCodes.Status200OK,
-                    };
-                    return SuccesResponse;
-                }
-                else
+            if (user.VerificationCode == code)
+            {
+                user.Status = ACCOUNT_STATUS.VERIFIED;
+                user.VerificationCode = null;
+
+                _context.SaveChangesAsync();
+                var SuccesResponse = new ApiResponse<bool>
                 {
-                    var BadRequestResponse = new ApiResponse<bool>
-                    {
-                        Data = false,
-                        Message = "Wrong Verification Code",
-                        Status = StatusCodes.Status400BadRequest,
-                    };
-                    return BadRequestResponse;
-                }
-            
+                    Data = true,
+                    Message = "User Verified",
+                    Status = StatusCodes.Status200OK,
+                };
+                return SuccesResponse;
+            }
+            else
+            {
+                var BadRequestResponse = new ApiResponse<bool>
+                {
+                    Data = false,
+                    Message = "Wrong Verification Code",
+                    Status = StatusCodes.Status400BadRequest,
+                };
+                return BadRequestResponse;
+            }
+
         }
 
         public async Task<ApiResponse<UserDTO>> GetProfile(int id)
@@ -334,13 +333,9 @@ namespace ORAA.Services.Implementations
 
                     user.PasswordResetCode = randomCode;
 
-                    SMTPService smtpService = new SMTPService();
-
-                    // Replace this line:
-
-                    // With this corrected line:
-                    string code = await SMTPService.SendVerificationCodeAsync(user.Email, user.FirstName);
-                    user.VerificationCode = code;
+                    //SMTPService smtpService = new SMTPService();
+                    //string code = SMTPService.SendVerificationCode(user.Email, user.FirstName);
+                    //user.VerificationCode = code;
 
                     _context.SaveChanges();
 

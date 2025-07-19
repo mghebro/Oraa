@@ -8,5 +8,6 @@ namespace ORAA.Services.Interfaces
     {
         Task<ApiResponse<AppleTokenResponseDTO>> AppleLogin(AppleAuthRequest request);
         Task<string> ValidateApplePaySessionAsync(string validationUrl);
+
     }
 }

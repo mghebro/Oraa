@@ -1,4 +1,6 @@
-﻿namespace ORAA.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ORAA.Models
 {
     public class Gift
     {
@@ -15,14 +17,10 @@
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        public Crystal? Crystal { get; set; }
-        public int? CrystalId { get; set; }
+        public Crystal Crystal { get; set; }
+        public Jewelery Jewelry { get; set; }
+        public int? AdminId { get; set; }           // FK property
+        public Admin Admin { get; set; }
 
-        public Jewelery? Jewelry { get; set; }
-
-        public User Sender { get; set; }
-        public int SenderId { get; set; }
-
-        public User? Recipient { get; set; }
     }
 }

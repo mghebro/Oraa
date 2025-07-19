@@ -160,7 +160,7 @@ namespace ORAA.Services.Implementations
         {
             var sortedList = await _context.Favorites
                 .Where(f => f.UserId == favorite.UserId)
-                .Include(f => f.Jewelry) 
+                .Include(f => f.Jewelry)
                 .OrderBy(f => f.Jewelry.Price)
                 .Select(f => _mapper.Map<FavoriteDTO>(f))
                 .ToListAsync();

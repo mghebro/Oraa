@@ -34,11 +34,8 @@ namespace ORAA.DTO
 
         public string Provider { get; set; } = "Email";
 
-        public bool IsActive { get; set; }
 
-        public string? AppleId { get; set; }
 
-        public string? GoogleId { get; set; }
 
         public ACCOUNT_STATUS Status { get; set; }
     }

@@ -11,9 +11,10 @@
         public string CustomizationNotes { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public Cart Cart { get; set; }
+
 
         public int CartId { get; set; }
+        public Cart Cart { get; set; }
 
         public int? JewelryId { get; set; }
         public Jewelery Jewelry { get; set; }
@@ -23,6 +24,9 @@
         //add material
         public int? DiscountCodeId { get; set; }
         public DiscountCode DiscountCode { get; set; }
+
+        public int? MaterialId { get; set; }
+        public Material Material { get; set; }
 
     }
 }

@@ -7,6 +7,8 @@ using ORAA.Enums;
 using ORAA.Models;
 using ORAA.Models.Apple;
 using ORAA.Services.Interfaces;
+using System.Security.Cryptography.X509Certificates;
+using System.Text.Json;
 
 namespace ORAA.Services.Implementations
 {
@@ -181,8 +183,29 @@ namespace ORAA.Services.Implementations
         // Keep this method for Apple Pay validation if needed
         public async Task<string> ValidateApplePaySessionAsync(string validationUrl)
         {
-            // Implementation for Apple Pay (different from Sign in with Apple)
-            throw new NotImplementedException("Apple Pay validation not implemented in this example");
+            var certPath = "Certificates/apple-pay-cert.p12";
+            var certPassword = "your_password";
+
+            var certificate = new X509Certificate2(certPath, certPassword, X509KeyStorageFlags.MachineKeySet);
+            var handler = new HttpClientHandler();
+            handler.ClientCertificates.Add(certificate);
+
+            var client = new HttpClient(handler);
+
+            var payload = new
+            {
+                merchantIdentifier = "merchant.com.yourdomain",
+                displayName = "Your Store",
+                initiative = "web",
+                initiativeContext = "yourdomain.com"
+            };
+
+            var json = JsonSerializer.Serialize(payload);
+            var content = new StringContent(json);
+            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+
+            var response = await client.PostAsync(validationUrl, content);
+            return await response.Content.ReadAsStringAsync();
         }
     }
 }
