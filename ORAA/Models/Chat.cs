@@ -15,9 +15,8 @@
         public User User { get; set; }
 
         public int? ConsultantId { get; set; }
-        public Consultant Consultant { get; set; }
+        public Consultant? Consultant { get; set; }
 
-        public List<Message> Messages { get; set; }
-
+        public List<Message> Messages { get; set; } = new();
     }
 }

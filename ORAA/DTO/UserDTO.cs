@@ -26,8 +26,20 @@ namespace ORAA.DTO
 
         public DateTime CreatedAt { get; set; }
 
+        public DateTime UpdatedAt { get; set; }
+
         public DateTime? LastLoginAt { get; set; }
 
         public string Role { get; set; } = ROLES.USER.ToString();
+
+        public string Provider { get; set; } = "Email";
+
+        public bool IsActive { get; set; }
+
+        public string? AppleId { get; set; }
+
+        public string? GoogleId { get; set; }
+
+        public ACCOUNT_STATUS Status { get; set; }
     }
 }

@@ -21,12 +21,11 @@
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-
         public User User { get; set; }
         public int UserId { get; set; }
-        public Chat Chat { get; set; }
-        public int ChatId { get; set; }
-        public Notification Notification { get; set; }
 
+        public List<Chat> Chats { get; set; } = new();
+
+        public List<Notification> Notifications { get; set; } = new();
     }
 }

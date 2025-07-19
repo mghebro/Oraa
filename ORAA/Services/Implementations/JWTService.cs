@@ -47,16 +47,21 @@ namespace ORAA.Services.Implementations
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
                 new Claim("FirstName", user.FirstName ?? ""),
                 new Claim("LastName", user.LastName ?? ""),
-                new Claim("IsVerified", user.IsVerified.ToString())
+                new Claim("IsVerified", user.IsVerified.ToString()),
+                new Claim("Provider", user.Provider), // Add provider information to JWT
+                new Claim("IsActive", user.IsActive.ToString())
             };
 
-            // Add authentication method claim
+            // Add specific provider IDs if available
             if (!string.IsNullOrEmpty(user.GoogleId))
-                claims.Add(new Claim("AuthMethod", "Google"));
-            else if (!string.IsNullOrEmpty(user.AppleId))
-                claims.Add(new Claim("AuthMethod", "Apple"));
-            else
-                claims.Add(new Claim("AuthMethod", "Email"));
+                claims.Add(new Claim("GoogleId", user.GoogleId));
+
+            if (!string.IsNullOrEmpty(user.AppleId))
+                claims.Add(new Claim("AppleId", user.AppleId));
+
+            // Add last login information
+            if (user.LastLoginAt.HasValue)
+                claims.Add(new Claim("LastLoginAt", user.LastLoginAt.Value.ToString("yyyy-MM-ddTHH:mm:ssZ")));
 
             var token = new JwtSecurityToken(
                 issuer: jwtIssuer,
@@ -69,7 +74,8 @@ namespace ORAA.Services.Implementations
             return new UserToken
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
-                ExpiresAt = DateTime.Now.AddMinutes(jwtDuration)
+                ExpiresAt = DateTime.Now.AddMinutes(jwtDuration),
+                RefreshToken = GenerateRefreshToken()
             };
         }
 

@@ -15,11 +15,14 @@
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        public Crystal Crystal { get; set; }
-        public Jewelery Jewelry { get; set; }
+        public Crystal? Crystal { get; set; }
+        public int? CrystalId { get; set; }
+
+        public Jewelery? Jewelry { get; set; }
+
         public User Sender { get; set; }
         public int SenderId { get; set; }
-        public User Recipient { get; set; }
 
+        public User? Recipient { get; set; }
     }
 }

@@ -38,10 +38,7 @@ namespace ORAA.Services.Implementations
             {
                 _logger.LogInformation("Processing Apple login for user: {AppleId}", request.AppleId);
 
-                // The Node.js app has already exchanged the code for tokens
-                // We just need to process the user data
-
-                // Find or create user
+                // Find or create user - check both AppleId and email
                 var user = await _context.Users
                     .FirstOrDefaultAsync(u => u.AppleId == request.AppleId ||
                                              (u.Email == request.Email && u.EmailConfirmed && !string.IsNullOrEmpty(request.Email)));
@@ -62,8 +59,10 @@ namespace ORAA.Services.Implementations
                         LastName = request.Name?.Split(' ').Skip(1).FirstOrDefault() ?? "",
                         Status = ACCOUNT_STATUS.VERIFIED,
                         Role = ROLES.USER,
-                        LastLoginAt = DateTime.UtcNow, // FIXED: Set LastLoginAt for new users
-                        IsActive = true
+                        LastLoginAt = DateTime.UtcNow,
+                        IsActive = true,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
                     };
 
                     var createResult = await _userManager.CreateAsync(user);
@@ -80,23 +79,26 @@ namespace ORAA.Services.Implementations
                         };
                     }
 
-                    _logger.LogInformation("Successfully created new user with ID: {UserId}", user.Id);
+                    _logger.LogInformation("Successfully created new user with ID: {UserId}, Provider: {Provider}",
+                        user.Id, user.Provider);
                 }
                 else
                 {
-                    _logger.LogInformation("Found existing user: {UserId}", user.Id);
+                    _logger.LogInformation("Found existing user: {UserId}, Current Provider: {Provider}",
+                        user.Id, user.Provider);
 
-                    // Update existing user
+                    // Update existing user with Apple ID if not set
                     if (string.IsNullOrEmpty(user.AppleId))
                     {
                         user.AppleId = request.AppleId;
-                        _logger.LogInformation("Updated user {UserId} with AppleId", user.Id);
+                        _logger.LogInformation("Updated user {UserId} with AppleId, Provider now: {Provider}",
+                            user.Id, user.Provider);
                     }
 
-                    // FIXED: Always update LastLoginAt and UpdatedAt for existing users
+                    // Update login timestamp
                     user.LastLoginAt = DateTime.UtcNow;
+                    user.UpdateTimestamp();
 
-                    // FIXED: Use try-catch to handle update errors
                     try
                     {
                         var updateResult = await _userManager.UpdateAsync(user);
@@ -107,7 +109,8 @@ namespace ORAA.Services.Implementations
                         }
                         else
                         {
-                            _logger.LogInformation("Successfully updated LastLoginAt for user {UserId}", user.Id);
+                            _logger.LogInformation("Successfully updated user {UserId}, Provider: {Provider}",
+                                user.Id, user.Provider);
                         }
                     }
                     catch (Exception updateEx)
@@ -117,11 +120,11 @@ namespace ORAA.Services.Implementations
                     }
                 }
 
-                // Generate your app's JWT token
+                // Generate JWT token
                 var userToken = _jWTService.GetUserToken(user);
                 var refreshToken = _jWTService.GenerateRefreshToken();
 
-                // FIXED: Update refresh token and save changes
+                // Update refresh token
                 try
                 {
                     user.RefreshToken = refreshToken;
@@ -141,7 +144,6 @@ namespace ORAA.Services.Implementations
                 catch (Exception tokenEx)
                 {
                     _logger.LogError(tokenEx, "Exception while updating refresh token for user {UserId}", user.Id);
-                    // Don't throw here, continue with response
                 }
 
                 // Create the response DTO
@@ -153,14 +155,14 @@ namespace ORAA.Services.Implementations
                     RefreshToken = refreshToken
                 };
 
-                _logger.LogInformation("Successfully processed Apple login for user: {UserId}, LastLoginAt: {LastLoginAt}",
-                    user.Id, user.LastLoginAt);
+                _logger.LogInformation("Successfully processed Apple login for user: {UserId}, Provider: {Provider}, LastLoginAt: {LastLoginAt}",
+                    user.Id, user.Provider, user.LastLoginAt);
 
                 return new ApiResponse<AppleTokenResponseDTO>
                 {
                     Data = appleTokenResponseDTO,
                     Status = StatusCodes.Status200OK,
-                    Message = "Login successful"
+                    Message = $"Login successful via {user.Provider}"
                 };
             }
             catch (Exception ex)
