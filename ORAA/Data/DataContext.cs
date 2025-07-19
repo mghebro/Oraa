@@ -45,6 +45,7 @@ namespace ORAA.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(e => e.CreatedAt)
@@ -61,6 +62,7 @@ namespace ORAA.Data
                     .IsUnique()
                     .HasFilter("[GoogleId] IS NOT NULL");
             });
+
             modelBuilder.Entity<User>()
                 .HasOne(u => u.UserDetails)
                 .WithOne(ud => ud.User)
@@ -113,13 +115,26 @@ namespace ORAA.Data
               .WithOne(ch => ch.Consultant)
               .HasForeignKey<Consultant>(c => c.ChatId);
 
+            // THIS IS THE KEY FIX - Change CASCADE to RESTRICT for Consultant -> Notification
+            modelBuilder.Entity<Consultant>()
+                .HasOne(c => c.Notification)
+                .WithMany()
+                .HasForeignKey("NotificationId")
+                .OnDelete(DeleteBehavior.Restrict) // 👈 CHANGED FROM CASCADE TO RESTRICT
+                .IsRequired();
+
+            // Also fix User -> Consultant relationship if needed
+            modelBuilder.Entity<Consultant>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Restrict); // 👈 Consider changing this to RESTRICT too
+
             modelBuilder.Entity<Message>()
                 .HasOne(m => m.Chat)
                 .WithMany(c => c.Messages)
                 .HasForeignKey(m => m.ChatId)
                 .OnDelete(DeleteBehavior.Restrict); // or DeleteBehavior.NoAction
-
-
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

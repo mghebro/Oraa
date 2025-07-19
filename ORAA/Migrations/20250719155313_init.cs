@@ -616,7 +616,7 @@ namespace ORAA.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Consultants_Chats_ChatId",
                         column: x => x.ChatId,
@@ -627,7 +627,7 @@ namespace ORAA.Migrations
                         column: x => x.NotificationId,
                         principalTable: "Notifications",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
