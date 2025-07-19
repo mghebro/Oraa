@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using ORAA.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.VisualBasic;
+using Microsoft.EntityFrameworkCore;
+using ORAA.Models;
 
 namespace ORAA.Data
 {
@@ -46,44 +45,84 @@ namespace ORAA.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.Property(e => e.CreatedAt)
-                    .HasDefaultValueSql("GETUTCDATE()");
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasDefaultValueSql("GETUTCDATE()");
-
-                entity.HasIndex(e => e.AppleId)
-                    .IsUnique()
-                    .HasFilter("[AppleId] IS NOT NULL");
-
-                entity.HasIndex(e => e.GoogleId)
-                    .IsUnique()
-                    .HasFilter("[GoogleId] IS NOT NULL");
-            });
-
             modelBuilder.Entity<User>()
                 .HasOne(u => u.UserDetails)
                 .WithOne(ud => ud.User)
                 .HasForeignKey<UserDetails>(ud => ud.UserId);
 
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("GETUTCDATE()");
+                entity.Property(e => e.UpdatedAt)
+                    .HasDefaultValueSql("GETUTCDATE()");
+                entity.HasIndex(e => e.AppleId)
+                    .IsUnique()
+                    .HasFilter("[AppleId] IS NOT NULL");
+                entity.HasIndex(e => e.GoogleId)
+                    .IsUnique()
+                    .HasFilter("[GoogleId] IS NOT NULL");
+            });
+
+            modelBuilder.Entity<Purchase>()
+                .HasOne(p => p.User)
+                .WithMany()
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            modelBuilder.Entity<Purchase>()
+                .HasOne(p => p.UserDetails)
+                .WithMany()
+                .HasForeignKey(p => p.UserDetailsId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Purchase>()
+                .HasOne(p => p.GiftCard)
+                .WithMany()
+                .HasForeignKey(p => p.GiftCardId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Purchase>()
+                .HasOne(p => p.DiscountCode)
+                .WithMany()
+                .HasForeignKey(p => p.DiscountCodeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+           
+            modelBuilder.Entity<Consultant>()
+                .HasOne(c => c.Chat)
+                .WithOne(ch => ch.Consultant)
+                .HasForeignKey<Consultant>(c => c.ChatId);
+
+            modelBuilder.Entity<Consultant>()
+                .HasOne(c => c.Notification)
+                .WithMany()
+                .HasForeignKey("NotificationId")
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired();
+
+            modelBuilder.Entity<Consultant>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Jewelery>()
                 .HasOne(j => j.HandCraftMan)
-                .WithMany() // Or WithMany(h => h.Jewelries) if defined
+                .WithMany()
                 .HasForeignKey(j => j.HandCraftManId)
-                .OnDelete(DeleteBehavior.Restrict); // 👈 prevent cascade here
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Jewelery>()
                 .HasOne(j => j.Material)
-                .WithMany() // Or WithMany(m => m.Jewelries)
+                .WithMany()
                 .HasForeignKey(j => j.MaterialId)
-                .OnDelete(DeleteBehavior.Cascade); // 👈 allow cascade on only one, if needed
+                .OnDelete(DeleteBehavior.Cascade); 
 
             modelBuilder.Entity<Jewelery>()
                 .HasOne(j => j.Affirmation)
                 .WithMany()
-                .HasForeignKey("AffirmationId") // if not explicitly declared in Jewelery class
+                .HasForeignKey("AffirmationId")
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Jewelery>()
@@ -99,42 +138,16 @@ namespace ORAA.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Gift>()
-               .HasOne(g => g.Admin)
-               .WithMany(a => a.Gifts)
-               .HasForeignKey(g => g.AdminId)
-               .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Admin>()
-                .HasMany(a => a.Gifts)
-                .WithOne(g => g.Admin)
+                .HasOne(g => g.Admin)
+                .WithMany(a => a.Gifts)
                 .HasForeignKey(g => g.AdminId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Consultant>()
-              .HasOne(c => c.Chat)
-              .WithOne(ch => ch.Consultant)
-              .HasForeignKey<Consultant>(c => c.ChatId);
-
-            // THIS IS THE KEY FIX - Change CASCADE to RESTRICT for Consultant -> Notification
-            modelBuilder.Entity<Consultant>()
-                .HasOne(c => c.Notification)
-                .WithMany()
-                .HasForeignKey("NotificationId")
-                .OnDelete(DeleteBehavior.Restrict) // 👈 CHANGED FROM CASCADE TO RESTRICT
-                .IsRequired();
-
-            // Also fix User -> Consultant relationship if needed
-            modelBuilder.Entity<Consultant>()
-                .HasOne(c => c.User)
-                .WithMany()
-                .HasForeignKey(c => c.UserId)
-                .OnDelete(DeleteBehavior.Restrict); // 👈 Consider changing this to RESTRICT too
 
             modelBuilder.Entity<Message>()
                 .HasOne(m => m.Chat)
                 .WithMany(c => c.Messages)
                 .HasForeignKey(m => m.ChatId)
-                .OnDelete(DeleteBehavior.Restrict); // or DeleteBehavior.NoAction
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

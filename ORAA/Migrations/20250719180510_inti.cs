@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ORAA.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class inti : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -664,7 +664,9 @@ namespace ORAA.Migrations
                     UserId = table.Column<int>(type: "int", nullable: false),
                     UserDetailsId = table.Column<int>(type: "int", nullable: false),
                     GiftCardId = table.Column<int>(type: "int", nullable: true),
-                    DiscountCodeId = table.Column<int>(type: "int", nullable: true)
+                    DiscountCodeId = table.Column<int>(type: "int", nullable: true),
+                    DiscountCodeId1 = table.Column<int>(type: "int", nullable: true),
+                    UserDetailsId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -674,23 +676,35 @@ namespace ORAA.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Purchases_DiscountCodes_DiscountCodeId",
                         column: x => x.DiscountCodeId,
+                        principalTable: "DiscountCodes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Purchases_DiscountCodes_DiscountCodeId1",
+                        column: x => x.DiscountCodeId1,
                         principalTable: "DiscountCodes",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Purchases_GIftCards_GiftCardId",
                         column: x => x.GiftCardId,
                         principalTable: "GIftCards",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Purchases_UserDetails_UserDetailsId",
                         column: x => x.UserDetailsId,
                         principalTable: "UserDetails",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Purchases_UserDetails_UserDetailsId1",
+                        column: x => x.UserDetailsId1,
+                        principalTable: "UserDetails",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -1385,6 +1399,11 @@ namespace ORAA.Migrations
                 column: "DiscountCodeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Purchases_DiscountCodeId1",
+                table: "Purchases",
+                column: "DiscountCodeId1");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Purchases_GiftCardId",
                 table: "Purchases",
                 column: "GiftCardId");
@@ -1393,6 +1412,11 @@ namespace ORAA.Migrations
                 name: "IX_Purchases_UserDetailsId",
                 table: "Purchases",
                 column: "UserDetailsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Purchases_UserDetailsId1",
+                table: "Purchases",
+                column: "UserDetailsId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Purchases_UserId",

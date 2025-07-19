@@ -1403,6 +1403,9 @@ namespace ORAA.Migrations
                     b.Property<int?>("DiscountCodeId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("DiscountCodeId1")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("EstimatedDelivery")
                         .HasColumnType("datetime2");
 
@@ -1472,6 +1475,9 @@ namespace ORAA.Migrations
                     b.Property<int>("UserDetailsId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("UserDetailsId1")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -1479,9 +1485,13 @@ namespace ORAA.Migrations
 
                     b.HasIndex("DiscountCodeId");
 
+                    b.HasIndex("DiscountCodeId1");
+
                     b.HasIndex("GiftCardId");
 
                     b.HasIndex("UserDetailsId");
+
+                    b.HasIndex("UserDetailsId1");
 
                     b.HasIndex("UserId");
 
@@ -2246,23 +2256,33 @@ namespace ORAA.Migrations
             modelBuilder.Entity("ORAA.Models.Purchase", b =>
                 {
                     b.HasOne("ORAA.Models.DiscountCode", "DiscountCode")
+                        .WithMany()
+                        .HasForeignKey("DiscountCodeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ORAA.Models.DiscountCode", null)
                         .WithMany("Purchases")
-                        .HasForeignKey("DiscountCodeId");
+                        .HasForeignKey("DiscountCodeId1");
 
                     b.HasOne("ORAA.Models.GIftCard", "GiftCard")
                         .WithMany()
-                        .HasForeignKey("GiftCardId");
+                        .HasForeignKey("GiftCardId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ORAA.Models.UserDetails", "UserDetails")
-                        .WithMany("Purchases")
+                        .WithMany()
                         .HasForeignKey("UserDetailsId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("ORAA.Models.UserDetails", null)
+                        .WithMany("Purchases")
+                        .HasForeignKey("UserDetailsId1");
 
                     b.HasOne("ORAA.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("DiscountCode");
