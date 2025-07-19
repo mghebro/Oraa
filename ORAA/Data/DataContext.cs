@@ -39,7 +39,7 @@ namespace ORAA.Data
         public DbSet<User> Users { get; set; }
         public DbSet<UserDetails> UserDetails { get; set; }
         public DbSet<OrderHistory> orderHistories { get; set; }
-        public DbSet<Collection> Collections { get; set; }
+        public DbSet<Collections> Collections { get; set; }
         public DbSet<ProductDetails> ProductDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

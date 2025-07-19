@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -21,8 +22,9 @@ public static class ServiceExtensions
     {
         services.AddBasicServices();
         services.AddDatabaseServices(configuration);
-        services.AddIdentityServices(configuration); // Pass configuration here
+        services.AddIdentityServices();
         services.AddBusinessServices();
+        services.AddAuthenticationServices(configuration);
         services.AddAuthorizationServices();
         services.AddOtherServices();
         return services;
@@ -52,9 +54,8 @@ public static class ServiceExtensions
         return services;
     }
 
-    private static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddIdentityServices(this IServiceCollection services)
     {
-        // Configure Identity with explicit scheme configuration
         services.AddIdentity<User, IdentityRole<int>>(options =>
         {
             options.Password.RequireDigit = true;
@@ -65,26 +66,55 @@ public static class ServiceExtensions
             options.User.RequireUniqueEmail = true;
             options.SignIn.RequireConfirmedEmail = false;
         })
-        .AddEntityFrameworkStores<DataContext>()
-        .AddDefaultTokenProviders();
+            .AddEntityFrameworkStores<DataContext>()
+            .AddDefaultTokenProviders();
 
-        // Configure authentication schemes
-        services.ConfigureApplicationCookie(options =>
-        {
-            options.LoginPath = "/Account/Login";
-            options.LogoutPath = "/Account/Logout";
-            options.ExpireTimeSpan = TimeSpan.FromDays(30);
-            options.SlidingExpiration = true;
-        });
+        return services;
+    }
+
+    private static IServiceCollection AddBusinessServices(this IServiceCollection services)
+    {
+        // Core services
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ICartService, CartService>();
+        services.AddScoped<IJewelryService, JewelryService>();
+        services.AddScoped<ICollectionsService, CollectionService>();
+        services.AddScoped<IAppleService, AppleService>();
+        services.AddScoped<IFavorite_Service, FavoriteService>();
+
+        // Add the missing ProductDetails service
+        services.AddScoped<IProductDetails, ProductDetailsService>();
+
+        // HTTP clients
+        services.AddHttpClient<IAppleService, AppleService>();
+
+        // Apple specific services
+        services.AddScoped<AppleUser>();
+
+        // Add HttpContextAccessor for JWT service
+        services.AddHttpContextAccessor();
+
+        return services;
+    }
+
+    private static IServiceCollection AddAuthenticationServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        // JWT Service
+        services.AddScoped<IJWTService, JWTService>();
 
         // Get JWT configuration
         var jwtKey = configuration["JWT:Key"] ?? throw new InvalidOperationException("JWT:Key not found in configuration");
         var jwtIssuer = configuration["JWT:Issuer"] ?? throw new InvalidOperationException("JWT:Issuer not found in configuration");
         var jwtAudience = configuration["JWT:Audience"] ?? throw new InvalidOperationException("JWT:Audience not found in configuration");
 
-        // Add JWT Bearer authentication as additional scheme
-        services.AddAuthentication()
-            .AddJwtBearer("Bearer", options =>
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+            .AddCookie()
+            .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -101,33 +131,6 @@ public static class ServiceExtensions
 
         return services;
     }
-    private static IServiceCollection AddBusinessServices(this IServiceCollection services)
-    {
-        // Core services
-        services.AddScoped<IUserService, UserService>();
-        services.AddScoped<ICartService, CartService>();
-        services.AddScoped<IJewelryService, JewelryService>();
-        services.AddScoped<ICollectionsService, CollectionService>();
-        services.AddScoped<IAppleService, AppleService>();
-        services.AddScoped<IFavorite_Service, FavoriteService>();
-
-        // Add the missing ProductDetails service
-        services.AddScoped<IProductDetails, ProductDetailsService>();
-
-        // JWT Service
-        services.AddScoped<IJWTService, JWTService>();
-
-        // HTTP clients
-        services.AddHttpClient<IAppleService, AppleService>();
-
-        // Apple specific services
-        services.AddScoped<AppleUser>();
-
-        // Add HttpContextAccessor for JWT service
-        services.AddHttpContextAccessor();
-
-        return services;
-    }
 
     private static IServiceCollection AddAuthorizationServices(this IServiceCollection services)
     {
@@ -136,7 +139,7 @@ public static class ServiceExtensions
             options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
             options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
             options.AddPolicy("HostOnly", policy => policy.RequireRole("Host"));
-            options.AddPolicy("Universal", policy => policy.RequireRole("Owner", "Admin"));
+            options.AddPolicy("Universal", policy => policy.RequireRole("Owner, Admin"));
         });
 
         return services;
