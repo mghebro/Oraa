@@ -17,5 +17,11 @@ public class AppleAuthRequest
     public bool EmailVerified { get; set; }     // Email verification status
     public string? AuthTime { get; set; }       // When the user authenticated
     public string? TokenType { get; set; }      // Token type (usually "Bearer")
-    public int? ExpiresIn { get; set; }         // Token expiration time
+    public int? ExpiresIn { get; set; }
+    public AppleAuthRequest()
+    {
+        AppleId = string.Empty;
+        IsPrivateEmail = false;
+        EmailVerified = false;
+    }// Token expiration time
 }

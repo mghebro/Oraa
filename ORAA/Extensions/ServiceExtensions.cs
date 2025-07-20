@@ -81,7 +81,8 @@ public static class ServiceExtensions
         services.AddScoped<ICollectionsService, CollectionService>();
         services.AddScoped<IAppleService, AppleService>();
         services.AddScoped<IFavorite_Service, FavoriteService>();
-
+        services.AddScoped<IAccountService, AccountService>(); // Add this if missing
+        services.AddScoped<IOrderHistoryService, OrderHistoryService>();
         // Add the missing ProductDetails service
         services.AddScoped<IProductDetails, ProductDetailsService>();
 

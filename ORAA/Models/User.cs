@@ -15,8 +15,11 @@ namespace ORAA.Models
         public DateTime? LastLoginAt { get; set; }
         public bool IsActive { get; set; }
 
-        // Authentication Provider Logic
-        public string Provider => GetAuthProvider();
+        // Store the authentication provider in the database
+        public string AuthProvider { get; set; } = "Email";
+
+        // Keep computed property for backward compatibility
+        public string Provider => AuthProvider;
 
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiresAtUtc { get; set; }
@@ -40,14 +43,10 @@ namespace ORAA.Models
         public List<Review>? Reviews { get; set; }
         public List<Notification>? Inbox { get; set; }
 
-        // Method to determine authentication provider
-        private string GetAuthProvider()
+        // Method to set authentication provider
+        public void SetAuthProvider(string provider)
         {
-            if (!string.IsNullOrEmpty(AppleId))
-                return "Apple";
-            if (!string.IsNullOrEmpty(GoogleId))
-                return "Google";
-            return "Email";
+            AuthProvider = provider;
         }
 
         // Method to update timestamps
@@ -57,4 +56,3 @@ namespace ORAA.Models
         }
     }
 }
-

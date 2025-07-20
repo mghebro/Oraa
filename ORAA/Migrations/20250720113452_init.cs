@@ -41,6 +41,7 @@ namespace ORAA.Migrations
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastLoginAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    AuthProvider = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, defaultValue: "Email"),
                     RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RefreshTokenExpiresAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
                     PasswordResetCode = table.Column<string>(type: "nvarchar(max)", nullable: true),

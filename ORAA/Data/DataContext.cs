@@ -49,13 +49,15 @@ namespace ORAA.Data
                 .HasOne(u => u.UserDetails)
                 .WithOne(ud => ud.User)
                 .HasForeignKey<UserDetails>(ud => ud.UserId);
-
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(e => e.CreatedAt)
                     .HasDefaultValueSql("GETUTCDATE()");
                 entity.Property(e => e.UpdatedAt)
                     .HasDefaultValueSql("GETUTCDATE()");
+                entity.Property(e => e.AuthProvider)
+                    .HasDefaultValue("Email")
+                    .HasMaxLength(50);
                 entity.HasIndex(e => e.AppleId)
                     .IsUnique()
                     .HasFilter("[AppleId] IS NOT NULL");

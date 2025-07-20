@@ -12,7 +12,7 @@ using ORAA.Data;
 namespace ORAA.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250719183844_init")]
+    [Migration("20250720113452_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -1654,6 +1654,13 @@ namespace ORAA.Migrations
 
                     b.Property<string>("AppleId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AuthProvider")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("Email");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()

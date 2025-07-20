@@ -1652,6 +1652,13 @@ namespace ORAA.Migrations
                     b.Property<string>("AppleId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("AuthProvider")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("Email");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");

@@ -64,7 +64,8 @@ namespace ORAA.Services.Implementations
                         LastLoginAt = DateTime.UtcNow,
                         IsActive = true,
                         CreatedAt = DateTime.UtcNow,
-                        UpdatedAt = DateTime.UtcNow
+                        UpdatedAt = DateTime.UtcNow,
+                        AuthProvider = "Apple" // Explicitly set the provider
                     };
 
                     var createResult = await _userManager.CreateAsync(user);
@@ -82,19 +83,24 @@ namespace ORAA.Services.Implementations
                     }
 
                     _logger.LogInformation("Successfully created new user with ID: {UserId}, Provider: {Provider}",
-                        user.Id, user.Provider);
+                        user.Id, user.AuthProvider);
                 }
                 else
                 {
                     _logger.LogInformation("Found existing user: {UserId}, Current Provider: {Provider}",
-                        user.Id, user.Provider);
+                        user.Id, user.AuthProvider);
 
                     // Update existing user with Apple ID if not set
                     if (string.IsNullOrEmpty(user.AppleId))
                     {
                         user.AppleId = request.AppleId;
+                        // Update provider if transitioning from email to Apple
+                        if (user.AuthProvider == "Email")
+                        {
+                            user.AuthProvider = "Apple";
+                        }
                         _logger.LogInformation("Updated user {UserId} with AppleId, Provider now: {Provider}",
-                            user.Id, user.Provider);
+                            user.Id, user.AuthProvider);
                     }
 
                     // Update login timestamp
@@ -112,7 +118,7 @@ namespace ORAA.Services.Implementations
                         else
                         {
                             _logger.LogInformation("Successfully updated user {UserId}, Provider: {Provider}",
-                                user.Id, user.Provider);
+                                user.Id, user.AuthProvider);
                         }
                     }
                     catch (Exception updateEx)
@@ -158,13 +164,13 @@ namespace ORAA.Services.Implementations
                 };
 
                 _logger.LogInformation("Successfully processed Apple login for user: {UserId}, Provider: {Provider}, LastLoginAt: {LastLoginAt}",
-                    user.Id, user.Provider, user.LastLoginAt);
+                    user.Id, user.AuthProvider, user.LastLoginAt);
 
                 return new ApiResponse<AppleTokenResponseDTO>
                 {
                     Data = appleTokenResponseDTO,
                     Status = StatusCodes.Status200OK,
-                    Message = $"Login successful via {user.Provider}"
+                    Message = $"Login successful via {user.AuthProvider}"
                 };
             }
             catch (Exception ex)
@@ -179,8 +185,6 @@ namespace ORAA.Services.Implementations
                 };
             }
         }
-        
-
         // Keep this method for Apple Pay validation if needed
         public async Task<string> ValidateApplePaySessionAsync(string validationUrl)
         {
