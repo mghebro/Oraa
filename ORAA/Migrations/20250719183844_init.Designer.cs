@@ -12,8 +12,8 @@ using ORAA.Data;
 namespace ORAA.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250719180510_inti")]
-    partial class inti
+    [Migration("20250719183844_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
